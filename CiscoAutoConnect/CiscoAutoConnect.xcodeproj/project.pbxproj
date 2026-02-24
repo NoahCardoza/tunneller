@@ -17,7 +17,6 @@
 		A1B2C3D4E5F60001000A0008 /* VPNManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0008 /* VPNManager.swift */; };
 		A1B2C3D4E5F60001000A0009 /* VPNAutomation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0009 /* VPNAutomation.swift */; };
 		A1B2C3D4E5F60001000A000A /* TOTPGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000A /* TOTPGenerator.swift */; };
-		A1B2C3D4E5F60001000A000B /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000B /* MenuBarView.swift */; };
 		A1B2C3D4E5F60001000A000C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000C /* SettingsView.swift */; };
 		A1B2C3D4E5F60001000A000D /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000D /* GeneralSettingsView.swift */; };
 		A1B2C3D4E5F60001000A000E /* CredentialSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A000E /* CredentialSettingsView.swift */; };
@@ -26,6 +25,7 @@
 		A1B2C3D4E5F60001000A0011 /* CryptoKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60003000A0002 /* CryptoKit.framework */; };
 		A1B2C3D4E5F60001000A0012 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60003000A0003 /* Security.framework */; };
 		A1B2C3D4E5F60001000A0013 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60003000A0004 /* ServiceManagement.framework */; };
+		A1B2C3D4E5F60001000A0014 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		A1B2C3D4E5F60002000A0001 /* CiscoAutoConnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CiscoAutoConnectApp.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0002 /* VPNState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNState.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0003 /* CredentialSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSource.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0004 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -49,7 +50,6 @@
 		A1B2C3D4E5F60002000A0008 /* VPNManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNManager.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0009 /* VPNAutomation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNAutomation.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000A /* TOTPGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOTPGenerator.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002000A000B /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000D /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000E /* CredentialSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSettingsView.swift; sourceTree = "<group>"; };
@@ -112,6 +112,7 @@
 		A1B2C3D4E5F60009000A0003 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */,
 				A1B2C3D4E5F60002000A0001 /* CiscoAutoConnectApp.swift */,
 			);
 			path = App;
@@ -167,7 +168,6 @@
 		A1B2C3D4E5F60009000A0009 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4E5F60002000A000B /* MenuBarView.swift */,
 				A1B2C3D4E5F60009000A000B /* Settings */,
 			);
 			path = Views;
@@ -310,6 +310,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D4E5F60001000A0001 /* CiscoAutoConnectApp.swift in Sources */,
+				A1B2C3D4E5F60001000A0014 /* AppDelegate.swift in Sources */,
 				A1B2C3D4E5F60001000A0002 /* VPNState.swift in Sources */,
 				A1B2C3D4E5F60001000A0003 /* CredentialSource.swift in Sources */,
 				A1B2C3D4E5F60001000A0004 /* AppSettings.swift in Sources */,
@@ -319,7 +320,6 @@
 				A1B2C3D4E5F60001000A0008 /* VPNManager.swift in Sources */,
 				A1B2C3D4E5F60001000A0009 /* VPNAutomation.swift in Sources */,
 				A1B2C3D4E5F60001000A000A /* TOTPGenerator.swift in Sources */,
-				A1B2C3D4E5F60001000A000B /* MenuBarView.swift in Sources */,
 				A1B2C3D4E5F60001000A000C /* SettingsView.swift in Sources */,
 				A1B2C3D4E5F60001000A000D /* GeneralSettingsView.swift in Sources */,
 				A1B2C3D4E5F60001000A000E /* CredentialSettingsView.swift in Sources */,

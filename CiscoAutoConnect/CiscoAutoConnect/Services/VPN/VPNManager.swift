@@ -1,5 +1,8 @@
 import Foundation
 import SwiftUI
+import os
+
+private let logger = Logger(subsystem: "com.cisco-auto-connect", category: "VPNManager")
 
 @MainActor
 final class VPNManager: ObservableObject {
@@ -12,14 +15,25 @@ final class VPNManager: ObservableObject {
         refreshStatus()
     }
 
-    /// Refresh the connection status by querying Cisco Secure Client.
+    /// Refresh the connection status by querying Cisco Secure Client in the background.
     func refreshStatus() {
-        if VPNAutomation.checkConnectionStatus() {
-            state = .connected
-        } else if case .connecting = state {
-            // Don't override connecting state during automation
-        } else {
-            state = .disconnected
+        Task {
+            let isConnected = await Task.detached {
+                VPNAutomation.checkConnectionStatus()
+            }.value
+
+            let previousState = state
+            logger.info("refreshStatus called — previous: \(String(describing: previousState)), isConnected: \(isConnected)")
+
+            if isConnected {
+                state = .connected
+            } else if case .connecting = state {
+                // Don't override connecting state during automation
+            } else {
+                state = .disconnected
+            }
+
+            logger.info("refreshStatus done — new state: \(String(describing: self.state))")
         }
     }
 
@@ -50,10 +64,13 @@ final class VPNManager: ObservableObject {
 
             // Give Cisco a moment to finalize
             try? await Task.sleep(for: .seconds(2))
-            refreshStatus()
 
-            if case .connected = state {
-                // Success
+            let isConnected = await Task.detached {
+                VPNAutomation.checkConnectionStatus()
+            }.value
+
+            if isConnected {
+                state = .connected
             } else {
                 state = .connected // Trust the automation completed
             }

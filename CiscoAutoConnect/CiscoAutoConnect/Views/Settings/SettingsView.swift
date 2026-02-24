@@ -13,6 +13,7 @@ struct SettingsView: View {
                     Label("Credentials", systemImage: "key")
                 }
         }
-        .frame(width: 480, height: 320)
+        .frame(width: 480, height: 400)
+        .padding(8)
     }
 }

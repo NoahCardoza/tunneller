@@ -39,11 +39,11 @@ struct CredentialSettingsView: View {
     private var onePasswordSection: some View {
         Section("1Password Paths") {
             LabeledContent("Password") {
-                TextField("op:// path", text: $settings.opPasswordPath)
+                TextField("", text: $settings.opPasswordPath)
                     .textFieldStyle(.roundedBorder)
             }
             LabeledContent("OTP") {
-                TextField("op:// path", text: $settings.opOtpPath)
+                TextField("", text: $settings.opOtpPath)
                     .textFieldStyle(.roundedBorder)
             }
             Text("Use the 1Password reference format: op://vault/item/field")

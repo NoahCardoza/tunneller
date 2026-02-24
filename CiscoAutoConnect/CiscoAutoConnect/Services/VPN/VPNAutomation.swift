@@ -1,5 +1,8 @@
 import ApplicationServices
 import Foundation
+import os
+
+private let logger = Logger(subsystem: "com.cisco-auto-connect", category: "VPNAutomation")
 
 enum VPNAutomation {
     enum AutomationError: LocalizedError {
@@ -17,7 +20,6 @@ enum VPNAutomation {
     }
 
     /// Check if the app is already connected by reading the Cisco button title.
-    @MainActor
     static func checkConnectionStatus() -> Bool {
         let source = """
         tell application "System Events" to tell process "Cisco Secure Client"
@@ -30,11 +32,20 @@ enum VPNAutomation {
         end tell
         """
 
-        guard let script = NSAppleScript(source: source) else { return false }
+        guard let script = NSAppleScript(source: source) else {
+            logger.warning("checkConnectionStatus: failed to create NSAppleScript")
+            return false
+        }
         var error: NSDictionary?
         let result = script.executeAndReturnError(&error)
-        if error != nil { return false }
-        return result.booleanValue
+        if let error = error {
+            let message = error[NSAppleScript.errorMessage] as? String ?? "unknown"
+            logger.info("checkConnectionStatus: AppleScript error — \(message)")
+            return false
+        }
+        let connected = result.booleanValue
+        logger.info("checkConnectionStatus: result = \(connected)")
+        return connected
     }
 
     /// Run the full VPN connection automation with the given credentials.
