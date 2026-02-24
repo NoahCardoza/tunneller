@@ -18,8 +18,8 @@ enum VPNState: Equatable {
     var iconName: String {
         switch self {
         case .disconnected, .error: "shield.slash"
-        case .connecting: "shield.badge.clock"  // macOS 14+ SF Symbol
-        case .connected: "shield.checkmark"
+        case .connecting: "shield"
+        case .connected: "checkmark.shield"
         }
     }
 }
