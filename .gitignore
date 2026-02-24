@@ -1,0 +1,18 @@
+# Xcode
+build/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+IDEWorkspaceChecks.plist
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Swift Package Manager
+.build/
+Package.resolved
+
+# Claude Code
+.claude/
