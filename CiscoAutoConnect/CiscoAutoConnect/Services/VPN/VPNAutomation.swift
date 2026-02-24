@@ -44,7 +44,13 @@ enum VPNAutomation {
         let escapedOTP = escapeForAppleScript(otp)
 
         let source = """
-        activate application "Cisco Secure Client"
+        tell application "Cisco Secure Client" to activate
+        
+        tell application "System Events"
+            tell process "Cisco Secure Client"
+                click menu item "Show Cisco Secure Client Window" of menu "Cisco Secure Client" of menu bar 1
+            end tell
+        end tell
 
         tell application "System Events" to tell process "Cisco Secure Client"
             -- Dismiss any existing sheet
