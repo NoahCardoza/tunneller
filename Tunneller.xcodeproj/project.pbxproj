@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A1B2C3D4E5F60001000A0001 /* CiscoAutoConnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0001 /* CiscoAutoConnectApp.swift */; };
+		A1B2C3D4E5F60001000A0001 /* TunnellerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0001 /* TunnellerApp.swift */; };
 		A1B2C3D4E5F60001000A0002 /* VPNState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0002 /* VPNState.swift */; };
 		A1B2C3D4E5F60001000A0003 /* CredentialSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0003 /* CredentialSource.swift */; };
 		A1B2C3D4E5F60001000A0004 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0004 /* AppSettings.swift */; };
@@ -26,6 +26,7 @@
 		A1B2C3D4E5F60001000A0012 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60003000A0003 /* Security.framework */; };
 		A1B2C3D4E5F60001000A0013 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60003000A0004 /* ServiceManagement.framework */; };
 		A1B2C3D4E5F60001000A0014 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */; };
+		AF7F64C22F4F6EF000E0F2FC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF7F64C12F4F6EF000E0F2FC /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,13 +35,12 @@
 			containerPortal = A1B2C3D4E5F60005000A0001 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A1B2C3D4E5F60006000A0001;
-			remoteInfo = CiscoAutoConnect;
+			remoteInfo = Tunneller;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A1B2C3D4E5F60002000A0001 /* CiscoAutoConnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CiscoAutoConnectApp.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002000A0001 /* TunnellerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnellerApp.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0002 /* VPNState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNState.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0003 /* CredentialSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSource.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0004 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -55,13 +55,15 @@
 		A1B2C3D4E5F60002000A000E /* CredentialSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSettingsView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A000F /* TOTPGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOTPGeneratorTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002000A0011 /* CiscoAutoConnect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CiscoAutoConnect.entitlements; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002000A0011 /* Tunneller.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tunneller.entitlements; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60003000A0001 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60003000A0002 /* CryptoKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoKit.framework; path = System/Library/Frameworks/CryptoKit.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60003000A0003 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60003000A0004 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-		A1B2C3D4E5F60007000A0001 /* CiscoAutoConnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CiscoAutoConnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A1B2C3D4E5F60007000A0002 /* CiscoAutoConnectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CiscoAutoConnectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60007000A0001 /* Tunneller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tunneller.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60007000A0002 /* TunnellerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TunnellerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF7F64C12F4F6EF000E0F2FC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,14 +91,15 @@
 		A1B2C3D4E5F60009000A0001 = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4E5F60009000A0002 /* CiscoAutoConnect */,
-				A1B2C3D4E5F60009000A000C /* CiscoAutoConnectTests */,
+				AF7F64C12F4F6EF000E0F2FC /* Assets.xcassets */,
+				A1B2C3D4E5F60009000A0002 /* Tunneller */,
+				A1B2C3D4E5F60009000A000C /* TunnellerTests */,
 				A1B2C3D4E5F60009000A000D /* Frameworks */,
 				A1B2C3D4E5F60009000A000E /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A1B2C3D4E5F60009000A0002 /* CiscoAutoConnect */ = {
+		A1B2C3D4E5F60009000A0002 /* Tunneller */ = {
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60009000A0003 /* App */,
@@ -104,16 +107,16 @@
 				A1B2C3D4E5F60009000A0005 /* Services */,
 				A1B2C3D4E5F60009000A0009 /* Views */,
 				A1B2C3D4E5F60002000A0010 /* Info.plist */,
-				A1B2C3D4E5F60002000A0011 /* CiscoAutoConnect.entitlements */,
+				A1B2C3D4E5F60002000A0011 /* Tunneller.entitlements */,
 			);
-			path = CiscoAutoConnect;
+			path = Tunneller;
 			sourceTree = "<group>";
 		};
 		A1B2C3D4E5F60009000A0003 /* App */ = {
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */,
-				A1B2C3D4E5F60002000A0001 /* CiscoAutoConnectApp.swift */,
+				A1B2C3D4E5F60002000A0001 /* TunnellerApp.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -183,12 +186,12 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
-		A1B2C3D4E5F60009000A000C /* CiscoAutoConnectTests */ = {
+		A1B2C3D4E5F60009000A000C /* TunnellerTests */ = {
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60002000A000F /* TOTPGeneratorTests.swift */,
 			);
-			path = CiscoAutoConnectTests;
+			path = TunnellerTests;
 			sourceTree = "<group>";
 		};
 		A1B2C3D4E5F60009000A000D /* Frameworks */ = {
@@ -205,8 +208,8 @@
 		A1B2C3D4E5F60009000A000E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4E5F60007000A0001 /* CiscoAutoConnect.app */,
-				A1B2C3D4E5F60007000A0002 /* CiscoAutoConnectTests.xctest */,
+				A1B2C3D4E5F60007000A0001 /* Tunneller.app */,
+				A1B2C3D4E5F60007000A0002 /* TunnellerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -214,9 +217,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A1B2C3D4E5F60006000A0001 /* CiscoAutoConnect */ = {
+		A1B2C3D4E5F60006000A0001 /* Tunneller */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1B2C3D4E5F6000B000A0001 /* Build configuration list for PBXNativeTarget "CiscoAutoConnect" */;
+			buildConfigurationList = A1B2C3D4E5F6000B000A0001 /* Build configuration list for PBXNativeTarget "Tunneller" */;
 			buildPhases = (
 				A1B2C3D4E5F6000A000A0001 /* Sources */,
 				A1B2C3D4E5F60008000A0001 /* Frameworks */,
@@ -226,14 +229,14 @@
 			);
 			dependencies = (
 			);
-			name = CiscoAutoConnect;
-			productName = CiscoAutoConnect;
-			productReference = A1B2C3D4E5F60007000A0001 /* CiscoAutoConnect.app */;
+			name = Tunneller;
+			productName = Tunneller;
+			productReference = A1B2C3D4E5F60007000A0001 /* Tunneller.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A1B2C3D4E5F60006000A0002 /* CiscoAutoConnectTests */ = {
+		A1B2C3D4E5F60006000A0002 /* TunnellerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1B2C3D4E5F6000B000A0002 /* Build configuration list for PBXNativeTarget "CiscoAutoConnectTests" */;
+			buildConfigurationList = A1B2C3D4E5F6000B000A0002 /* Build configuration list for PBXNativeTarget "TunnellerTests" */;
 			buildPhases = (
 				A1B2C3D4E5F6000A000A0002 /* Sources */,
 				A1B2C3D4E5F60008000A0002 /* Frameworks */,
@@ -244,9 +247,9 @@
 			dependencies = (
 				A1B2C3D4E5F6000C000A0001 /* PBXTargetDependency */,
 			);
-			name = CiscoAutoConnectTests;
-			productName = CiscoAutoConnectTests;
-			productReference = A1B2C3D4E5F60007000A0002 /* CiscoAutoConnectTests.xctest */;
+			name = TunnellerTests;
+			productName = TunnellerTests;
+			productReference = A1B2C3D4E5F60007000A0002 /* TunnellerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -268,7 +271,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A1B2C3D4E5F6000B000A0003 /* Build configuration list for PBXProject "CiscoAutoConnect" */;
+			buildConfigurationList = A1B2C3D4E5F6000B000A0003 /* Build configuration list for PBXProject "Tunneller" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -281,8 +284,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A1B2C3D4E5F60006000A0001 /* CiscoAutoConnect */,
-				A1B2C3D4E5F60006000A0002 /* CiscoAutoConnectTests */,
+				A1B2C3D4E5F60006000A0001 /* Tunneller */,
+				A1B2C3D4E5F60006000A0002 /* TunnellerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -292,6 +295,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF7F64C22F4F6EF000E0F2FC /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,7 +313,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1B2C3D4E5F60001000A0001 /* CiscoAutoConnectApp.swift in Sources */,
+				A1B2C3D4E5F60001000A0001 /* TunnellerApp.swift in Sources */,
 				A1B2C3D4E5F60001000A0014 /* AppDelegate.swift in Sources */,
 				A1B2C3D4E5F60001000A0002 /* VPNState.swift in Sources */,
 				A1B2C3D4E5F60001000A0003 /* CredentialSource.swift in Sources */,
@@ -339,7 +343,7 @@
 /* Begin PBXTargetDependency section */
 		A1B2C3D4E5F6000C000A0001 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A1B2C3D4E5F60006000A0001 /* CiscoAutoConnect */;
+			target = A1B2C3D4E5F60006000A0001 /* Tunneller */;
 			targetProxy = A1B2C3D4E5F60004000A0001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -470,8 +474,10 @@
 		A1B2C3D4E5F6000D000A0003 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				AUTOMATION_APPLE_EVENTS = YES;
-				CODE_SIGN_ENTITLEMENTS = CiscoAutoConnect/CiscoAutoConnect.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Tunneller/Tunneller.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -481,7 +487,8 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = CiscoAutoConnect/Info.plist;
+				INFOPLIST_FILE = Tunneller/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = "";
@@ -491,7 +498,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ciscoautoconnect.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tunneller.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -501,8 +508,10 @@
 		A1B2C3D4E5F6000D000A0004 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				AUTOMATION_APPLE_EVENTS = YES;
-				CODE_SIGN_ENTITLEMENTS = CiscoAutoConnect/CiscoAutoConnect.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Tunneller/Tunneller.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -512,7 +521,8 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = CiscoAutoConnect/Info.plist;
+				INFOPLIST_FILE = Tunneller/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = "";
@@ -522,7 +532,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ciscoautoconnect.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tunneller.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -540,11 +550,11 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ciscoautoconnect.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tunneller.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CiscoAutoConnect.app/Contents/MacOS/CiscoAutoConnect";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tunneller.app/Contents/MacOS/Tunneller";
 			};
 			name = Debug;
 		};
@@ -559,18 +569,18 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ciscoautoconnect.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tunneller.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CiscoAutoConnect.app/Contents/MacOS/CiscoAutoConnect";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tunneller.app/Contents/MacOS/Tunneller";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A1B2C3D4E5F6000B000A0001 /* Build configuration list for PBXNativeTarget "CiscoAutoConnect" */ = {
+		A1B2C3D4E5F6000B000A0001 /* Build configuration list for PBXNativeTarget "Tunneller" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1B2C3D4E5F6000D000A0003 /* Debug */,
@@ -579,7 +589,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1B2C3D4E5F6000B000A0002 /* Build configuration list for PBXNativeTarget "CiscoAutoConnectTests" */ = {
+		A1B2C3D4E5F6000B000A0002 /* Build configuration list for PBXNativeTarget "TunnellerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1B2C3D4E5F6000D000A0005 /* Debug */,
@@ -588,7 +598,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1B2C3D4E5F6000B000A0003 /* Build configuration list for PBXProject "CiscoAutoConnect" */ = {
+		A1B2C3D4E5F6000B000A0003 /* Build configuration list for PBXProject "Tunneller" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1B2C3D4E5F6000D000A0001 /* Debug */,

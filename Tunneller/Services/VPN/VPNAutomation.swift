@@ -2,7 +2,7 @@ import ApplicationServices
 import Foundation
 import os
 
-private let logger = Logger(subsystem: "com.cisco-auto-connect", category: "VPNAutomation")
+private let logger = Logger(subsystem: "com.tunneller", category: "VPNAutomation")
 
 enum VPNAutomation {
     enum AutomationError: LocalizedError {

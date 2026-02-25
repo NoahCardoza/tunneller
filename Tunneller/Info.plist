@@ -17,6 +17,6 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>CiscoAutoConnect needs to automate Cisco Secure Client to connect to VPN.</string>
+	<string>Tunneller needs to automate Cisco Secure Client to connect to VPN.</string>
 </dict>
 </plist>

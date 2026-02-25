@@ -26,7 +26,7 @@ final class AppSettings: ObservableObject {
     // MARK: - Keychain
 
     @AppStorage("keychainAccountName")
-    var keychainAccountName: String = "CiscoAutoConnect-VPN"
+    var keychainAccountName: String = "Tunneller-VPN"
 
     // MARK: - General
 

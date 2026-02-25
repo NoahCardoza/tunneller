@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import os
 
-private let logger = Logger(subsystem: "com.cisco-auto-connect", category: "VPNManager")
+private let logger = Logger(subsystem: "com.tunneller", category: "VPNManager")
 
 @MainActor
 final class VPNManager: ObservableObject {

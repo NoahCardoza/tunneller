@@ -1,5 +1,5 @@
 import XCTest
-@testable import CiscoAutoConnect
+@testable import Tunneller
 
 final class TOTPGeneratorTests: XCTestCase {
     // RFC 6238 Appendix B test vectors (SHA1, 8-digit codes)

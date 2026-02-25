@@ -4,7 +4,7 @@ import Security
 struct KeychainProvider: CredentialProvider {
     let accountName: String
 
-    private static let service = "com.ciscoautoconnect"
+    private static let service = "com.tunneller"
     private static let passwordKey = "vpn-password"
     private static let totpSeedKey = "vpn-totp-seed"
 

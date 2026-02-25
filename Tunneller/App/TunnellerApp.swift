@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct CiscoAutoConnectApp: App {
+struct TunnellerApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
