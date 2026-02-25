@@ -32,6 +32,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     accessibilityDescription: "VPN Status"
                 )
             }
+
+        // Auto-discover op binary path on first launch
+        let settings = AppSettings.shared
+        if !settings.hasRunOpDiscovery {
+            if let path = OnePasswordProvider.discoverOpBinaryPath() {
+                settings.opBinaryPath = path
+            }
+            settings.hasRunOpDiscovery = true
+        }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -108,6 +117,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     // MARK: - Actions
 
     @objc private func connectVPN() {
+        if let error = vpnManager.credentialConfigurationError() {
+            let alert = NSAlert()
+            alert.messageText = "Credentials Not Configured"
+            alert.informativeText = error
+            alert.alertStyle = .warning
+            alert.addButton(withTitle: "Open Settings")
+            alert.addButton(withTitle: "OK")
+
+            if alert.runModal() == .alertFirstButtonReturn {
+                openSettings()
+            }
+            return
+        }
+
         Task {
             await vpnManager.connect()
         }

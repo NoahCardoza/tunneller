@@ -10,6 +10,7 @@ struct CredentialSettingsView: View {
     @State private var keychainSaveSuccess = false
     @State private var hasStoredPassword = false
     @State private var hasStoredTOTPSeed = false
+    @State private var showOpNotFoundAlert = false
 
     var body: some View {
         Form {
@@ -37,18 +38,47 @@ struct CredentialSettingsView: View {
     // MARK: - 1Password Section
 
     private var onePasswordSection: some View {
-        Section("1Password Paths") {
-            LabeledContent("Password") {
-                TextField("", text: $settings.opPasswordPath)
-                    .textFieldStyle(.roundedBorder)
+        Section("1Password CLI") {
+            VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("op Binary")
+                        .font(.headline)
+                    HStack {
+                        TextField("", text: $settings.opBinaryPath)
+                            .textFieldStyle(.roundedBorder).labelsHidden()
+                        Button("Find") {
+                            if let path = OnePasswordProvider.discoverOpBinaryPath() {
+                                settings.opBinaryPath = path
+                            } else {
+                                showOpNotFoundAlert = true
+                            }
+                        }
+                    }
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Password")
+                        .font(.headline)
+                    TextField("", text: $settings.opPasswordPath)
+                        .textFieldStyle(.roundedBorder).labelsHidden()
+                    Text("e.g. op://vault/item/password")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("OTP")
+                        .font(.headline)
+                    TextField("", text: $settings.opOtpPath)
+                        .textFieldStyle(.roundedBorder).labelsHidden()
+                    Text("e.g. op://vault/item/one-time password")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
-            LabeledContent("OTP") {
-                TextField("", text: $settings.opOtpPath)
-                    .textFieldStyle(.roundedBorder)
-            }
-            Text("Use the 1Password reference format: op://vault/item/field")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        }
+        .alert("1Password CLI Not Found", isPresented: $showOpNotFoundAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("The 1Password CLI (op) could not be found. Install it from https://1password.com/downloads/command-line/ or enter the path manually.")
         }
     }
 
@@ -57,26 +87,38 @@ struct CredentialSettingsView: View {
     private var keychainSection: some View {
         Section("Keychain Storage") {
             LabeledContent("Password") {
+                VStack(alignment: .leading) {
                 HStack {
+                    
                     SecureField("VPN password", text: $keychainPassword)
-                        .textFieldStyle(.roundedBorder)
+                        .textFieldStyle(.roundedBorder).labelsHidden()
                     if hasStoredPassword {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(.green)
                             .help("Password is stored in Keychain")
                     }
+                        
+                }
+                    Text("Okta password")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
                 }
             }
 
             LabeledContent("TOTP Seed") {
-                HStack {
-                    SecureField("Base32 secret key", text: $keychainTOTPSeed)
-                        .textFieldStyle(.roundedBorder)
-                    if hasStoredTOTPSeed {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                            .help("TOTP seed is stored in Keychain")
+                VStack(alignment: .leading) {
+                    HStack {
+                        SecureField("Base32 secret key", text: $keychainTOTPSeed)
+                            .textFieldStyle(.roundedBorder).labelsHidden()
+                        if hasStoredTOTPSeed {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                                .help("TOTP seed is stored in Keychain")
+                        }
                     }
+                    Text("Base32 secret key")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -131,3 +173,5 @@ struct CredentialSettingsView: View {
         hasStoredTOTPSeed = KeychainProvider.hasTOTPSeed(accountName: settings.keychainAccountName)
     }
 }
+
+#Preview {CredentialSettingsView()}

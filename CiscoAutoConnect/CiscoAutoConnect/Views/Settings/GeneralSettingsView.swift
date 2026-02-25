@@ -23,16 +23,6 @@ struct GeneralSettingsView: View {
                     }
             }
 
-            Section("1Password CLI") {
-                LabeledContent("op binary path") {
-                    TextField("", text: $settings.opBinaryPath)
-                        .textFieldStyle(.roundedBorder)
-                }
-                Text("Default: /opt/homebrew/bin/op")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
             Section("Accessibility") {
                 HStack {
                     if VPNAutomation.isAccessibilityGranted() {

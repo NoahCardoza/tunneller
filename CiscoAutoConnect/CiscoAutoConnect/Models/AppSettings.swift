@@ -7,18 +7,21 @@ final class AppSettings: ObservableObject {
     // MARK: - Credential Source
 
     @AppStorage("credentialSource")
-    var credentialSource: CredentialSource = .onePassword
+    var credentialSource: CredentialSource = .keychain
 
     // MARK: - 1Password CLI
 
     @AppStorage("opBinaryPath")
-    var opBinaryPath: String = "/opt/homebrew/bin/op"
+    var opBinaryPath: String = ""
 
     @AppStorage("opPasswordPath")
-    var opPasswordPath: String = "op://Quicken/Okta Quicken/password"
+    var opPasswordPath: String = ""
 
     @AppStorage("opOtpPath")
-    var opOtpPath: String = "op://Quicken/Okta Quicken/one-time password"
+    var opOtpPath: String = ""
+
+    @AppStorage("hasRunOpDiscovery")
+    var hasRunOpDiscovery: Bool = false
 
     // MARK: - Keychain
 

@@ -79,6 +79,28 @@ final class VPNManager: ObservableObject {
         }
     }
 
+    /// Returns a descriptive error if the selected credential source is not fully configured, or `nil` if ready.
+    func credentialConfigurationError() -> String? {
+        switch settings.credentialSource {
+        case .keychain:
+            let hasPassword = KeychainProvider.hasPassword(accountName: settings.keychainAccountName)
+            let hasTOTP = KeychainProvider.hasTOTPSeed(accountName: settings.keychainAccountName)
+            var missing: [String] = []
+            if !hasPassword { missing.append("password") }
+            if !hasTOTP { missing.append("TOTP seed") }
+            if missing.isEmpty { return nil }
+            return "Keychain is missing: \(missing.joined(separator: " and ")). Save them in Settings → Credentials."
+
+        case .onePassword:
+            var missing: [String] = []
+            if settings.opBinaryPath.isEmpty { missing.append("op binary path") }
+            if settings.opPasswordPath.isEmpty { missing.append("password reference") }
+            if settings.opOtpPath.isEmpty { missing.append("OTP reference") }
+            if missing.isEmpty { return nil }
+            return "1Password is not fully configured. Missing: \(missing.joined(separator: ", ")). Set them in Settings → Credentials."
+        }
+    }
+
     // MARK: - Private
 
     private func makeProvider() -> CredentialProvider {

@@ -28,6 +28,36 @@ struct OnePasswordProvider: CredentialProvider {
         }
     }
 
+    // MARK: - Discovery
+
+    static func discoverOpBinaryPath() -> String? {
+        let commonPaths = ["/opt/homebrew/bin/op", "/usr/local/bin/op"]
+        for path in commonPaths {
+            if FileManager.default.isExecutableFile(atPath: path) {
+                return path
+            }
+        }
+
+        // Fallback: use shell to resolve via PATH
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/zsh")
+        process.arguments = ["-l", "-c", "which op"]
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = Pipe()
+
+        do {
+            try process.run()
+            process.waitUntilExit()
+            guard process.terminationStatus == 0 else { return nil }
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let path = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            return path.isEmpty ? nil : path
+        } catch {
+            return nil
+        }
+    }
+
     private static func execute(binary: String, arguments: [String]) throws -> String {
         guard FileManager.default.isExecutableFile(atPath: binary) else {
             throw CredentialError.opNotFound(binary)
