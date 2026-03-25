@@ -26,6 +26,7 @@
 		A1B2C3D4E5F60001000A0012 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60003000A0003 /* Security.framework */; };
 		A1B2C3D4E5F60001000A0013 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60003000A0004 /* ServiceManagement.framework */; };
 		A1B2C3D4E5F60001000A0014 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */; };
+		A1B2C3D4E5F60001000A0015 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002000A0015 /* MenuBarView.swift */; };
 		AF7F64C22F4F6EF000E0F2FC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF7F64C12F4F6EF000E0F2FC /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +58,7 @@
 		A1B2C3D4E5F60002000A0010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0011 /* Tunneller.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tunneller.entitlements; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002000A0015 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60003000A0001 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60003000A0002 /* CryptoKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoKit.framework; path = System/Library/Frameworks/CryptoKit.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60003000A0003 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -116,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60002000A0014 /* AppDelegate.swift */,
+				A1B2C3D4E5F60002000A0015 /* MenuBarView.swift */,
 				A1B2C3D4E5F60002000A0001 /* TunnellerApp.swift */,
 			);
 			path = App;
@@ -315,6 +318,7 @@
 			files = (
 				A1B2C3D4E5F60001000A0001 /* TunnellerApp.swift in Sources */,
 				A1B2C3D4E5F60001000A0014 /* AppDelegate.swift in Sources */,
+				A1B2C3D4E5F60001000A0015 /* MenuBarView.swift in Sources */,
 				A1B2C3D4E5F60001000A0002 /* VPNState.swift in Sources */,
 				A1B2C3D4E5F60001000A0003 /* CredentialSource.swift in Sources */,
 				A1B2C3D4E5F60001000A0004 /* AppSettings.swift in Sources */,
