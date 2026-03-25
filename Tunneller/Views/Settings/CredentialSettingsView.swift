@@ -8,8 +8,7 @@ struct CredentialSettingsView: View {
     @State private var keychainTOTPSeed = ""
     @State private var keychainSaveError: String?
     @State private var keychainSaveSuccess = false
-    @State private var hasStoredPassword = false
-    @State private var hasStoredTOTPSeed = false
+    private var hasStoredCredentials: Bool { settings.hasKeychainCredentials }
     @State private var showOpNotFoundAlert = false
     @State private var needsMigration = false
     @State private var migrationError: String?
@@ -35,7 +34,7 @@ struct CredentialSettingsView: View {
         }
         .formStyle(.grouped)
         .padding()
-        .onAppear(perform: refreshKeychainStatus)
+        .onAppear(perform: checkMigration)
     }
 
     // MARK: - 1Password Section
@@ -123,7 +122,7 @@ struct CredentialSettingsView: View {
                     
                     SecureField("VPN password", text: $keychainPassword)
                         .textFieldStyle(.roundedBorder).labelsHidden()
-                    if hasStoredPassword {
+                    if hasStoredCredentials {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(.green)
                             .help("Password is stored in Keychain")
@@ -141,7 +140,7 @@ struct CredentialSettingsView: View {
                     HStack {
                         SecureField("Base32 secret key", text: $keychainTOTPSeed)
                             .textFieldStyle(.roundedBorder).labelsHidden()
-                        if hasStoredTOTPSeed {
+                        if hasStoredCredentials {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(.green)
                                 .help("TOTP seed is stored in Keychain")
@@ -161,7 +160,7 @@ struct CredentialSettingsView: View {
                 Button("Save to Keychain") {
                     saveToKeychain()
                 }
-                .disabled(keychainPassword.isEmpty && keychainTOTPSeed.isEmpty)
+                .disabled(keychainPassword.isEmpty || keychainTOTPSeed.isEmpty)
 
                 if keychainSaveSuccess {
                     Text("Saved!")
@@ -183,25 +182,26 @@ struct CredentialSettingsView: View {
         keychainSaveError = nil
         keychainSaveSuccess = false
 
+        guard !keychainPassword.isEmpty && !keychainTOTPSeed.isEmpty else {
+            keychainSaveError = "Both password and TOTP seed are required."
+            return
+        }
+
         do {
-            if !keychainPassword.isEmpty {
-                try KeychainProvider.savePassword(keychainPassword, accountName: settings.keychainAccountName)
-                keychainPassword = ""
-            }
-            if !keychainTOTPSeed.isEmpty {
-                try KeychainProvider.saveTOTPSeed(keychainTOTPSeed, accountName: settings.keychainAccountName)
-                keychainTOTPSeed = ""
-            }
+            try KeychainProvider.saveCredentials(
+                password: keychainPassword,
+                totpSeed: keychainTOTPSeed,
+                accountName: settings.keychainAccountName
+            )
+            keychainPassword = ""
+            keychainTOTPSeed = ""
             keychainSaveSuccess = true
-            refreshKeychainStatus()
         } catch {
             keychainSaveError = error.localizedDescription
         }
     }
 
-    private func refreshKeychainStatus() {
-        hasStoredPassword = KeychainProvider.hasPassword(accountName: settings.keychainAccountName)
-        hasStoredTOTPSeed = KeychainProvider.hasTOTPSeed(accountName: settings.keychainAccountName)
+    private func checkMigration() {
         needsMigration = KeychainProvider.needsMigration(accountName: settings.keychainAccountName)
     }
 
@@ -212,7 +212,7 @@ struct CredentialSettingsView: View {
         do {
             try KeychainProvider.migrateToProtectedStorage(accountName: settings.keychainAccountName)
             migrationSuccess = true
-            refreshKeychainStatus()
+            checkMigration()
         } catch {
             migrationError = error.localizedDescription
         }

@@ -57,8 +57,17 @@ final class VPNManager: ObservableObject {
         do {
             let provider = makeProvider()
 
-            let password = try await provider.fetchPassword()
-            let otp = try await provider.fetchOTP()
+            let password: String
+            let otp: String
+            if let keychainProvider = provider as? KeychainProvider {
+                // Single biometric prompt for both credentials
+                let creds = try keychainProvider.fetchCredentials()
+                password = creds.password
+                otp = creds.otp
+            } else {
+                password = try await provider.fetchPassword()
+                otp = try await provider.fetchOTP()
+            }
 
             try VPNAutomation.connect(password: password, otp: otp)
 
@@ -77,6 +86,12 @@ final class VPNManager: ObservableObject {
         } catch CredentialError.authenticationCancelled {
             // User intentionally cancelled — return to disconnected, not error
             state = .disconnected
+        } catch CredentialError.keychainItemNotFound {
+            settings.hasKeychainCredentials = false
+            state = .error(CredentialError.keychainItemNotFound.localizedDescription)
+        } catch CredentialError.totpSeedNotConfigured {
+            settings.hasKeychainCredentials = false
+            state = .error(CredentialError.totpSeedNotConfigured.localizedDescription)
         } catch {
             state = .error(error.localizedDescription)
         }
@@ -86,13 +101,8 @@ final class VPNManager: ObservableObject {
     func credentialConfigurationError() -> String? {
         switch settings.credentialSource {
         case .keychain:
-            let hasPassword = KeychainProvider.hasPassword(accountName: settings.keychainAccountName)
-            let hasTOTP = KeychainProvider.hasTOTPSeed(accountName: settings.keychainAccountName)
-            var missing: [String] = []
-            if !hasPassword { missing.append("password") }
-            if !hasTOTP { missing.append("TOTP seed") }
-            if missing.isEmpty { return nil }
-            return "Keychain is missing: \(missing.joined(separator: " and ")). Save them in Settings → Credentials."
+            if settings.hasKeychainCredentials { return nil }
+            return "Keychain credentials not configured. Save them in Settings → Credentials."
 
         case .onePassword:
             var missing: [String] = []

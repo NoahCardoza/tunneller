@@ -28,6 +28,9 @@ final class AppSettings: ObservableObject {
     @AppStorage("keychainAccountName")
     var keychainAccountName: String = "Tunneller-VPN"
 
+    @AppStorage("hasKeychainCredentials")
+    var hasKeychainCredentials: Bool = false
+
     // MARK: - General
 
     @AppStorage("launchAtLogin")
