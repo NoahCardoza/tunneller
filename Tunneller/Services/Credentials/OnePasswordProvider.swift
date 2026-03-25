@@ -92,6 +92,8 @@ enum CredentialError: LocalizedError {
     case keychainError(OSStatus)
     case totpSeedNotConfigured
     case invalidTOTPSeed
+    case authenticationCancelled
+    case authenticationFailed
 
     var errorDescription: String? {
         switch self {
@@ -107,6 +109,10 @@ enum CredentialError: LocalizedError {
             "TOTP seed not configured. Add it in Settings."
         case .invalidTOTPSeed:
             "Invalid TOTP seed. Check the value in Settings."
+        case .authenticationCancelled:
+            "Authentication was cancelled. Unlock with Touch ID or passcode to connect."
+        case .authenticationFailed:
+            "Authentication failed. Try again to connect."
         }
     }
 }

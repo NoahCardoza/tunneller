@@ -74,6 +74,9 @@ final class VPNManager: ObservableObject {
             } else {
                 state = .connected // Trust the automation completed
             }
+        } catch CredentialError.authenticationCancelled {
+            // User intentionally cancelled — return to disconnected, not error
+            state = .disconnected
         } catch {
             state = .error(error.localizedDescription)
         }

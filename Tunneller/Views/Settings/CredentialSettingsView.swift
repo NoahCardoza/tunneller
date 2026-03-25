@@ -11,6 +11,9 @@ struct CredentialSettingsView: View {
     @State private var hasStoredPassword = false
     @State private var hasStoredTOTPSeed = false
     @State private var showOpNotFoundAlert = false
+    @State private var needsMigration = false
+    @State private var migrationError: String?
+    @State private var migrationSuccess = false
 
     var body: some View {
         Form {
@@ -84,7 +87,35 @@ struct CredentialSettingsView: View {
 
     // MARK: - Keychain Section
 
+    @ViewBuilder
     private var keychainSection: some View {
+        if needsMigration {
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    Label("Security Upgrade Available", systemImage: "exclamationmark.shield")
+                        .font(.headline)
+                    Text("Your stored credentials don't require biometric authentication. Upgrade to protect them with Touch ID or passcode.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    HStack {
+                        Button("Upgrade Security") {
+                            upgradeKeychainSecurity()
+                        }
+                        if migrationSuccess {
+                            Text("Upgraded!")
+                                .foregroundStyle(.green)
+                                .font(.caption)
+                        }
+                        if let error = migrationError {
+                            Text(error)
+                                .foregroundStyle(.red)
+                                .font(.caption)
+                        }
+                    }
+                }
+            }
+        }
+
         Section("Keychain Storage") {
             LabeledContent("Password") {
                 VStack(alignment: .leading) {
@@ -171,6 +202,20 @@ struct CredentialSettingsView: View {
     private func refreshKeychainStatus() {
         hasStoredPassword = KeychainProvider.hasPassword(accountName: settings.keychainAccountName)
         hasStoredTOTPSeed = KeychainProvider.hasTOTPSeed(accountName: settings.keychainAccountName)
+        needsMigration = KeychainProvider.needsMigration(accountName: settings.keychainAccountName)
+    }
+
+    private func upgradeKeychainSecurity() {
+        migrationError = nil
+        migrationSuccess = false
+
+        do {
+            try KeychainProvider.migrateToProtectedStorage(accountName: settings.keychainAccountName)
+            migrationSuccess = true
+            refreshKeychainStatus()
+        } catch {
+            migrationError = error.localizedDescription
+        }
     }
 }
 
