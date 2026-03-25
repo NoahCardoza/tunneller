@@ -40,9 +40,9 @@ struct CredentialSettingsView: View {
     // MARK: - 1Password Section
 
     private var onePasswordSection: some View {
-        Section("1Password CLI") {
+        Section {
             VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text("op Binary")
                         .font(.headline)
                     HStack {
@@ -57,7 +57,7 @@ struct CredentialSettingsView: View {
                         }
                     }
                 }
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text("Password")
                         .font(.headline)
                     TextField("", text: $settings.opPasswordPath)
@@ -66,7 +66,7 @@ struct CredentialSettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text("OTP")
                         .font(.headline)
                     TextField("", text: $settings.opOtpPath)
@@ -115,41 +115,43 @@ struct CredentialSettingsView: View {
             }
         }
 
-        Section("Keychain Storage") {
-            LabeledContent("Password") {
-                VStack(alignment: .leading) {
+        Section {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Password")
+                    .font(.headline)
                 HStack {
+                    SecureField("", text: $keychainPassword)
+                        .textFieldStyle(.roundedBorder)
+                        .labelsHidden()
                     
-                    SecureField("VPN password", text: $keychainPassword)
-                        .textFieldStyle(.roundedBorder).labelsHidden()
+                    
                     if hasStoredCredentials {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(.green)
                             .help("Password is stored in Keychain")
                     }
-                        
                 }
-                    Text("Okta password")
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                }
+                Text("Okta password")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
-            LabeledContent("TOTP Seed") {
-                VStack(alignment: .leading) {
-                    HStack {
-                        SecureField("Base32 secret key", text: $keychainTOTPSeed)
-                            .textFieldStyle(.roundedBorder).labelsHidden()
-                        if hasStoredCredentials {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                                .help("TOTP seed is stored in Keychain")
-                        }
+            VStack(alignment: .leading, spacing: 8) {
+                Text("TOTP Seed")
+                    .font(.headline)
+                HStack {
+                    SecureField("", text: $keychainTOTPSeed)
+                        .textFieldStyle(.roundedBorder)
+                        .labelsHidden()
+                    if hasStoredCredentials {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                            .help("TOTP seed is stored in Keychain")
                     }
-                    Text("Base32 secret key")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                 }
+                Text("Base32 secret key")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Text("Paste the TOTP setup key (base32 encoded) from your authenticator setup.")
@@ -219,4 +221,3 @@ struct CredentialSettingsView: View {
     }
 }
 
-#Preview {CredentialSettingsView()}
