@@ -30,7 +30,27 @@ echo ""
 echo "==> Built at: $APP"
 echo ""
 
-if [[ "${1:-}" == "--run" ]]; then
+RUN=false
+INSTALL=false
+for arg in "$@"; do
+    case "$arg" in
+        --run)     RUN=true ;;
+        --install) INSTALL=true ;;
+    esac
+done
+
+if $INSTALL; then
+    DEST="/Applications/Tunneller.app"
+    echo "==> Installing to $DEST..."
+    killall Tunneller 2>/dev/null || true
+    sleep 1
+    rm -rf "$DEST"
+    cp -R "$APP" "$DEST"
+    echo "==> Installed."
+    APP="$DEST"
+fi
+
+if $RUN; then
     echo "==> Killing old instance..."
     killall Tunneller 2>/dev/null || true
     sleep 1
