@@ -4,9 +4,14 @@ struct MenuBarView: View {
     @ObservedObject var vpnManager: VPNManager
     @Environment(\.openSettings) private var openSettings
 
+    private let menuOpened = NotificationCenter.default.publisher(
+        for: NSMenu.didBeginTrackingNotification
+    )
+
     var body: some View {
         // Status label
         Label(vpnManager.state.statusLabel, systemImage: vpnManager.state.iconName)
+            .onReceive(menuOpened) { _ in vpnManager.refreshStatus() }
 
         Divider()
 

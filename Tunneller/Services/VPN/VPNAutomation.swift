@@ -19,31 +19,27 @@ enum VPNAutomation {
         }
     }
 
-    /// Check if the app is already connected by reading the Cisco button title.
+    /// Check if the VPN is connected by querying the Cisco Secure Client CLI.
     static func checkConnectionStatus() -> Bool {
-        let source = """
-        tell application "System Events" to tell process "Cisco Secure Client"
-            if not (exists (first window whose name is equal to "Cisco Secure Client")) then
-                return false
-            end if
-            set client_window to first window whose name is equal to "Cisco Secure Client"
-            set action_button to button 1 of client_window
-            return title of action_button is equal to "Disconnect"
-        end tell
-        """
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/opt/cisco/secureclient/bin/vpn")
+        process.arguments = ["state"]
 
-        guard let script = NSAppleScript(source: source) else {
-            logger.warning("checkConnectionStatus: failed to create NSAppleScript")
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
+
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            logger.info("checkConnectionStatus: failed to run vpn CLI — \(error.localizedDescription)")
             return false
         }
-        var error: NSDictionary?
-        let result = script.executeAndReturnError(&error)
-        if let error = error {
-            let message = error[NSAppleScript.errorMessage] as? String ?? "unknown"
-            logger.info("checkConnectionStatus: AppleScript error — \(message)")
-            return false
-        }
-        let connected = result.booleanValue
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: data, encoding: .utf8) ?? ""
+        let connected = output.localizedCaseInsensitiveContains("state: Connected")
         logger.info("checkConnectionStatus: result = \(connected)")
         return connected
     }
