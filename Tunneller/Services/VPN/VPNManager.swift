@@ -10,9 +10,21 @@ final class VPNManager: ObservableObject {
 
     private let settings: AppSettings
 
+    private var connectObserver: Any?
+
     init(settings: AppSettings = .shared) {
         self.settings = settings
         refreshStatus()
+        connectObserver = NotificationCenter.default.addObserver(
+            forName: .tunnellerConnect,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                await self.connect()
+            }
+        }
     }
 
     /// Refresh the connection status by querying Cisco Secure Client in the background.
