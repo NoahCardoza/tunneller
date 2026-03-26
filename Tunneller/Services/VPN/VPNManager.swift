@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import SwiftUI
 import os
@@ -93,19 +94,21 @@ final class VPNManager: ObservableObject {
             if isConnected {
                 state = .connected
             } else {
-                state = .connected // Trust the automation completed
+                state = .disconnected
             }
         } catch CredentialError.authenticationCancelled {
-            // User intentionally cancelled — return to disconnected, not error
             state = .disconnected
         } catch CredentialError.keychainItemNotFound {
             settings.hasKeychainCredentials = false
-            state = .error(CredentialError.keychainItemNotFound.localizedDescription)
+            state = .disconnected
+            showErrorAlert(CredentialError.keychainItemNotFound.localizedDescription)
         } catch CredentialError.totpSeedNotConfigured {
             settings.hasKeychainCredentials = false
-            state = .error(CredentialError.totpSeedNotConfigured.localizedDescription)
+            state = .disconnected
+            showErrorAlert(CredentialError.totpSeedNotConfigured.localizedDescription)
         } catch {
-            state = .error(error.localizedDescription)
+            state = .disconnected
+            showErrorAlert(error.localizedDescription)
         }
     }
 
@@ -140,6 +143,15 @@ final class VPNManager: ObservableObject {
         }
 
         await connect()
+    }
+
+    private func showErrorAlert(_ message: String) {
+        let alert = NSAlert()
+        alert.messageText = "Connection Failed"
+        alert.informativeText = message
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
 
     // MARK: - Private
