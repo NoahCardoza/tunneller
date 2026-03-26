@@ -42,6 +42,8 @@ The CLI launches Tunneller if it's not already running, then triggers the VPN co
 
 ```bash
 tun connect                  # Trigger VPN connection
+tun connect --wait           # Connect and block until VPN is up (or -w)
+tun status                   # Check if VPN is connected
 open tunneller://connect     # Same thing via URL scheme
 ```
 

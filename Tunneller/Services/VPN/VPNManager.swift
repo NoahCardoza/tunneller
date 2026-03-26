@@ -22,7 +22,7 @@ final class VPNManager: ObservableObject {
         ) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor in
-                await self.connect()
+                await self.refreshStatusAndConnect()
             }
         }
     }
@@ -124,6 +124,22 @@ final class VPNManager: ObservableObject {
             if missing.isEmpty { return nil }
             return "1Password is not fully configured. Missing: \(missing.joined(separator: ", ")). Set them in Settings → Credentials."
         }
+    }
+
+    /// Refresh status before connecting — used by the URL scheme handler
+    /// to avoid stale cached state blocking the connection.
+    func refreshStatusAndConnect() async {
+        let isConnected = await Task.detached {
+            VPNAutomation.checkConnectionStatus()
+        }.value
+
+        if isConnected {
+            state = .connected
+        } else {
+            state = .disconnected
+        }
+
+        await connect()
     }
 
     // MARK: - Private
