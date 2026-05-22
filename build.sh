@@ -31,6 +31,7 @@ swiftc -o "$BUILD_DIR/Debug/tunneller-cli" \
     "$PROJECT_DIR/Tunneller/CLI/tunneller-cli.swift" \
     -O
 cp "$BUILD_DIR/Debug/tunneller-cli" "$APP/Contents/MacOS/tunneller-cli"
+codesign --force --deep --sign - "$APP"
 
 echo ""
 echo "==> Built at: $APP"
@@ -51,8 +52,8 @@ if $INSTALL; then
     echo "==> Installing to $DEST..."
     killall Tunneller 2>/dev/null || true
     sleep 1
-    rm -rf "$DEST"
-    cp -R "$APP" "$DEST"
+    rm -rf "$DEST" || { echo "==> Permission denied, retrying with sudo..."; sudo rm -rf "$DEST"; }
+    cp -R "$APP" "$DEST" || { echo "==> Permission denied, retrying with sudo..."; sudo cp -R "$APP" "$DEST"; }
     CLI_DIR="$HOME/.local/bin"
     mkdir -p "$CLI_DIR"
     echo "==> Installing CLI symlink to $CLI_DIR/tun..."
