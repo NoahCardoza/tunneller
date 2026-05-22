@@ -98,6 +98,29 @@ enum VPNAutomation {
                 perform action "AXConfirm"
             end tell
 
+            -- Wait for auth method selection window (has a Continue button)
+            set auth_window to missing value
+            repeat 100 times
+                delay 0.1
+                repeat with w in windows
+                    try
+                        if (exists button "Continue" of w) then
+                            set auth_window to w
+                            exit repeat
+                        end if
+                    end try
+                end repeat
+                if auth_window is not missing value then exit repeat
+            end repeat
+
+            -- Select Google Authenticator (option 2) and continue
+            if auth_window is not missing value then
+                tell (text field 1 of auth_window)
+                    set value to "2"
+                end tell
+                click button "Continue" of auth_window
+            end if
+
             -- Wait for OTP window
             tell (a reference to (first window whose name starts with "Cisco Secure Client | " and size is equal to {452, 270}))
                 repeat until it exists
