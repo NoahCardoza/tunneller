@@ -16,3 +16,6 @@ Package.resolved
 
 # Claude Code
 .claude/
+
+# Self-signed build certificate (generated locally by build.sh)
+certs/
