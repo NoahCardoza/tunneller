@@ -26,9 +26,6 @@ setup_signing() {
             -subj "/CN=Tunneller Dev" \
             -addext "keyUsage=critical,digitalSignature" \
             -addext "extendedKeyUsage=critical,codeSigning" 2>/dev/null
-        openssl pkcs12 -export -out "$P12_FILE" \
-            -inkey "$KEY_PEM" -in "$CERT_PEM" \
-            -passout pass:"$BUILD_KEYCHAIN_PASS" 2>/dev/null
         echo "  Certificate created."
     fi
 
@@ -45,6 +42,17 @@ setup_signing() {
 
     # Import cert + trust it if not already present
     if ! security find-certificate -c "$CERT_NAME" "$BUILD_KEYCHAIN" &>/dev/null; then
+        # OpenSSL 3 defaults to a PKCS#12 format that macOS Keychain cannot
+        # import. Use its legacy compatibility mode when available; older
+        # OpenSSL and LibreSSL versions already emit a compatible format.
+        PKCS12_COMPAT_ARGS=()
+        if openssl pkcs12 -help 2>&1 | grep -q -- "-legacy"; then
+            PKCS12_COMPAT_ARGS=(-legacy)
+        fi
+        openssl pkcs12 -export "${PKCS12_COMPAT_ARGS[@]}" -out "$P12_FILE" \
+            -inkey "$KEY_PEM" -in "$CERT_PEM" \
+            -passout pass:"$BUILD_KEYCHAIN_PASS" 2>/dev/null
+
         echo "  Importing certificate into build keychain..."
         security import "$P12_FILE" -k "$BUILD_KEYCHAIN" -P "$BUILD_KEYCHAIN_PASS" \
             -T /usr/bin/codesign -T /usr/bin/security
