@@ -45,8 +45,7 @@ enum VPNAutomation {
     }
 
     /// Run the full VPN connection automation with the given credentials.
-    @MainActor
-    static func connect(password: String, otp: String, mfaMethodNumber: String? = nil) throws {
+    static func connect(password: String, otp: String, mfaMethodNumber: String? = nil) async throws {
         let escapedPassword = escapeForAppleScript(password)
         let escapedOTP = escapeForAppleScript(otp)
         let mfaMethodSelectionScript: String
@@ -118,13 +117,16 @@ enum VPNAutomation {
 
             click action_button
 
-            -- Wait for password window
-            tell (a reference to (first window whose name starts with "Cisco Secure Client | " and size is equal to {469, 195}))
-                repeat until it exists
-                    delay 0.1
-                end repeat
-                set pwd_window to it
-            end tell
+            -- Wait up to 20 seconds for password window
+            set pwd_window to missing value
+            repeat 200 times
+                try
+                    set pwd_window to first window whose name starts with "Cisco Secure Client | " and size is equal to {469, 195}
+                end try
+                if pwd_window is not missing value then exit repeat
+                delay 0.1
+            end repeat
+            if pwd_window is missing value then error "Timed out waiting for the password prompt."
 
             -- Enter password
             tell (a reference to (text field 2 of pwd_window))
@@ -134,13 +136,16 @@ enum VPNAutomation {
 
             \(mfaMethodSelectionScript)
 
-            -- Wait for OTP window
-            tell (a reference to (first window whose name starts with "Cisco Secure Client | " and size is equal to {452, 270}))
-                repeat until it exists
-                    delay 0.1
-                end repeat
-                set otp_window to it
-            end tell
+            -- Wait up to 20 seconds for OTP window
+            set otp_window to missing value
+            repeat 200 times
+                try
+                    set otp_window to first window whose name starts with "Cisco Secure Client | " and size is equal to {452, 270}
+                end try
+                if otp_window is not missing value then exit repeat
+                delay 0.1
+            end repeat
+            if otp_window is missing value then error "Timed out waiting for the OTP prompt."
 
             -- Enter OTP
             tell (a reference to (text field 1 of otp_window))
@@ -148,29 +153,34 @@ enum VPNAutomation {
                 perform action "AXConfirm"
             end tell
 
-            -- Wait for and dismiss banner
-            tell (a reference to (first window whose name starts with "Cisco Secure Client - Banner"))
-                repeat until it exists
-                    delay 0.1
-                end repeat
-                set banner_window to it
-            end tell
+            -- Wait up to 20 seconds for and dismiss banner
+            set banner_window to missing value
+            repeat 200 times
+                try
+                    set banner_window to first window whose name starts with "Cisco Secure Client - Banner"
+                end try
+                if banner_window is not missing value then exit repeat
+                delay 0.1
+            end repeat
+            if banner_window is missing value then error "Timed out waiting for the connection banner."
 
             tell button 1 of banner_window to click
         end tell
         """
 
-        guard let script = NSAppleScript(source: source) else {
-            throw AutomationError.scriptFailed("Failed to create AppleScript.")
-        }
+        try await Task.detached(priority: .userInitiated) {
+            guard let script = NSAppleScript(source: source) else {
+                throw AutomationError.scriptFailed("Failed to create AppleScript.")
+            }
 
-        var error: NSDictionary?
-        script.executeAndReturnError(&error)
+            var error: NSDictionary?
+            script.executeAndReturnError(&error)
 
-        if let error = error {
-            let message = error[NSAppleScript.errorMessage] as? String ?? "Unknown AppleScript error"
-            throw AutomationError.scriptFailed(message)
-        }
+            if let error {
+                let message = error[NSAppleScript.errorMessage] as? String ?? "Unknown AppleScript error"
+                throw AutomationError.scriptFailed(message)
+            }
+        }.value
     }
 
     /// Escape a string for embedding inside AppleScript double-quoted strings.

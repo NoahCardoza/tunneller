@@ -85,7 +85,7 @@ final class VPNManager: ObservableObject {
             let mfaMethodNumber = settings.mfaMethodNumber
                 .trimmingCharacters(in: .whitespacesAndNewlines)
 
-            try VPNAutomation.connect(
+            try await VPNAutomation.connect(
                 password: password,
                 otp: otp,
                 mfaMethodNumber: mfaMethodNumber.isEmpty ? nil : mfaMethodNumber
