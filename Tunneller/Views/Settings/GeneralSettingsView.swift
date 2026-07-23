@@ -23,6 +23,21 @@ struct GeneralSettingsView: View {
                     }
             }
 
+            Section("VPN Authentication") {
+                HStack {
+                    Text("MFA method number")
+                    Spacer()
+                    TextField("", text: $settings.mfaMethodNumber, prompt: Text("Optional"))
+                        .textFieldStyle(.roundedBorder)
+                        .labelsHidden()
+                        .frame(width: 90)
+                }
+
+                Text("If Cisco asks you to choose an MFA method after entering your password, enter its number here (for example, 2). Leave blank to skip this step.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
             Section("Accessibility") {
                 HStack {
                     if VPNAutomation.isAccessibilityGranted() {

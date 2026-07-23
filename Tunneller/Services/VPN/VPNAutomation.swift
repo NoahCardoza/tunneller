@@ -46,9 +46,43 @@ enum VPNAutomation {
 
     /// Run the full VPN connection automation with the given credentials.
     @MainActor
-    static func connect(password: String, otp: String) throws {
+    static func connect(password: String, otp: String, mfaMethodNumber: String? = nil) throws {
         let escapedPassword = escapeForAppleScript(password)
         let escapedOTP = escapeForAppleScript(otp)
+        let mfaMethodSelectionScript: String
+
+        if let mfaMethodNumber {
+            let escapedMFAMethodNumber = escapeForAppleScript(mfaMethodNumber)
+            mfaMethodSelectionScript = """
+            -- Wait for the auth method selection window. Both this prompt and the OTP prompt
+            -- have a Continue button, so require the method prompt's unique Answer label.
+            set auth_window to missing value
+            repeat 100 times
+                delay 0.1
+                repeat with w in windows
+                    try
+                        if (exists button "Continue" of w) and (exists static text "Answer:" of w) then
+                            set auth_window to w
+                            exit repeat
+                        end if
+                    end try
+                end repeat
+                if auth_window is not missing value then exit repeat
+            end repeat
+
+            if auth_window is missing value then
+                error "Could not find the MFA method selection prompt. Clear the MFA method setting if Cisco no longer shows it."
+            end if
+
+            -- Select the configured authentication method and continue.
+            tell (text field 1 of auth_window)
+                set value to "\(escapedMFAMethodNumber)"
+            end tell
+            click button "Continue" of auth_window
+            """
+        } else {
+            mfaMethodSelectionScript = ""
+        }
 
         let source = """
         tell application "Cisco Secure Client" to activate
@@ -98,32 +132,7 @@ enum VPNAutomation {
                 perform action "AXConfirm"
             end tell
 
-            -- NOTE: Some orgs show an auth method selection window here (with a Continue button).
-            -- The block below handles it by selecting option 2 (Google Authenticator), but it was
-            -- misidentifying the OTP window (which also has Continue) and corrupting that field.
-            -- Commented out until we can distinguish the two windows reliably; may be re-enabled
-            -- with a better selector that uniquely identifies the auth method window vs. the OTP window.
-            --
-            -- set auth_window to missing value
-            -- repeat 100 times
-            --     delay 0.1
-            --     repeat with w in windows
-            --         try
-            --             if (exists button "Continue" of w) then
-            --                 set auth_window to w
-            --                 exit repeat
-            --             end if
-            --         end try
-            --     end repeat
-            --     if auth_window is not missing value then exit repeat
-            -- end repeat
-            --
-            -- if auth_window is not missing value then
-            --     tell (text field 1 of auth_window)
-            --         set value to "2"
-            --     end tell
-            --     click button "Continue" of auth_window
-            -- end if
+            \(mfaMethodSelectionScript)
 
             -- Wait for OTP window
             tell (a reference to (first window whose name starts with "Cisco Secure Client | " and size is equal to {452, 270}))
