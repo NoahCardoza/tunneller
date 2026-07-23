@@ -35,4 +35,9 @@ final class AppSettings: ObservableObject {
 
     @AppStorage("launchAtLogin")
     var launchAtLogin: Bool = false
+
+    /// Optional numbered choice shown by Cisco between password and OTP prompts.
+    /// Leave blank when the VPN proceeds directly to the OTP prompt.
+    @AppStorage("mfaMethodNumber")
+    var mfaMethodNumber: String = ""
 }

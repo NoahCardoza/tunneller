@@ -82,7 +82,14 @@ final class VPNManager: ObservableObject {
                 otp = try await provider.fetchOTP()
             }
 
-            try VPNAutomation.connect(password: password, otp: otp)
+            let mfaMethodNumber = settings.mfaMethodNumber
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+
+            try await VPNAutomation.connect(
+                password: password,
+                otp: otp,
+                mfaMethodNumber: mfaMethodNumber.isEmpty ? nil : mfaMethodNumber
+            )
 
             // Give Cisco a moment to finalize
             try? await Task.sleep(for: .seconds(2))
