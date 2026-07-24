@@ -1,5 +1,10 @@
 # Tunneller
 
+> [!IMPORTANT]
+> **This repository has moved and is no longer maintained here.**
+> Active development now lives at **[Quicken-Inc/tunneller](https://github.com/Quicken-Inc/tunneller)** (internal to the Quicken org).
+> Please file issues and PRs there. This copy is kept for history only.
+
 A macOS menu bar app that automates Cisco Secure Client VPN connections. It fetches your credentials (from Keychain or 1Password), generates TOTP codes, and drives the Cisco UI for you — one click to connect.
 
 ## Quick Start
