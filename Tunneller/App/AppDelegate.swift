@@ -1,4 +1,5 @@
 import AppKit
+import Foundation
 
 extension Notification.Name {
     static let tunnellerConnect = Notification.Name("tunnellerConnect")
@@ -11,7 +12,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             guard url.scheme == "tunneller" else { continue }
             switch url.host {
             case "connect":
-                NotificationCenter.default.post(name: .tunnellerConnect, object: nil)
+                let attemptID = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+                    .queryItems?.first(where: { $0.name == "attempt" })?.value
+                NotificationCenter.default.post(name: .tunnellerConnect, object: attemptID)
             default:
                 break
             }
