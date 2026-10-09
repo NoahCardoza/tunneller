@@ -34,6 +34,14 @@ swiftc -o "$BUILD_DIR/Debug/tunneller-cli" \
     -O
 cp "$BUILD_DIR/Debug/tunneller-cli" "$APP/Contents/MacOS/tunneller-cli"
 
+# Copying a binary into a bundle after Xcode has signed it invalidates the
+# bundle's CodeDirectory. Re-sign the outer bundle (preserving the
+# entitlements Xcode generated for it) and verify the artifact we will
+# actually install. The project currently uses ad-hoc signing for local
+# builds; release packaging can replace "-" with its distribution identity.
+codesign --force --sign - --preserve-metadata=entitlements,requirements,flags "$APP"
+codesign --verify --deep --strict --verbose=2 "$APP"
+
 echo ""
 echo "==> Built at: $APP"
 echo "==> CLI tool: $APP/Contents/MacOS/tunneller-cli"
