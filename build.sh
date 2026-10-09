@@ -31,6 +31,7 @@ swiftc -o "$BUILD_DIR/Debug/tunneller-cli" \
     -parse-as-library \
     "$PROJECT_DIR/Tunneller/CLI/tunneller-cli.swift" \
     "$PROJECT_DIR/Tunneller/Services/VPN/ConnectionAttemptStore.swift" \
+    "$PROJECT_DIR/Tunneller/Services/VPN/ConnectionDiagnostics.swift" \
     -O
 cp "$BUILD_DIR/Debug/tunneller-cli" "$APP/Contents/MacOS/tunneller-cli"
 

@@ -182,11 +182,11 @@ final class ConnectionAttemptTests: XCTestCase {
         router.send(attemptID: "first")
         router.send(attemptID: nil)
         var delivered: [String?] = []
-        router.register { delivered.append($0) }
+        router.register { delivered.append($0.attemptID) }
         XCTAssertEqual(delivered, ["first", nil])
         router.send(attemptID: "third")
         XCTAssertEqual(delivered, ["first", nil, "third"])
-        router.register { delivered.append($0) }
+        router.register { delivered.append($0.attemptID) }
         XCTAssertEqual(delivered.count, 3)
     }
 }

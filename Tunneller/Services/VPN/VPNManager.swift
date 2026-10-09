@@ -13,14 +13,22 @@ final class VPNManager: ObservableObject {
 
     private var activeConnection: Task<Void, Never>?
     private var activeAttemptIDs = Set<UUID>()
+    private var activeRequests: [ConnectionRequest] = []
+    private var connectionID: UUID?
 
     init(settings: AppSettings = .shared) {
         self.settings = settings
         refreshStatus()
-        ConnectionRequestRouter.shared.register { [weak self] attemptID in
+        ConnectionRequestRouter.shared.register({ [weak self] request in
             guard let self else { return }
-            _ = self.connectionTask(attemptID: attemptID)
-        }
+            _ = self.connectionTask(request: request)
+        }, onTermination: { [weak self] in
+            guard let self, self.activeConnection != nil else { return }
+            for request in self.activeRequests {
+                ConnectionDiagnostics.shared.record(.terminal, component: .app, request: request,
+                    connectionID: self.connectionID, terminal: .init(result: .abandoned))
+            }
+        })
     }
 
     /// Refresh the connection status by querying Cisco Secure Client in the background.
@@ -47,25 +55,39 @@ final class VPNManager: ObservableObject {
 
     /// Run the full connect flow: fetch credentials → automate Cisco.
     func connect() async {
-        await connectionTask(attemptID: nil)?.value
+        let request = ConnectionRequest(attemptID: nil)
+        ConnectionDiagnostics.shared.record(.menuRequest, component: .app, request: request)
+        await connectionTask(request: request)?.value
     }
 
     /// All callers join the same in-flight connection and receive its terminal result.
     /// URL-scheme callers additionally receive that result through ConnectionAttemptStore.
-    private func connectionTask(attemptID: String?) -> Task<Void, Never>? {
-        if let attemptID {
-            guard let id = UUID(uuidString: attemptID) else { return nil }
+    private func connectionTask(request: ConnectionRequest) -> Task<Void, Never>? {
+        if let attemptID = request.attemptID {
+            guard let id = UUID(uuidString: attemptID) else {
+                ConnectionDiagnostics.shared.record(.requestIgnored, component: .app, request: request, reason: .invalidAttempt)
+                return nil
+            }
             do {
-                guard try ConnectionAttemptStore.shared.isPending(id) else { return nil }
+                guard try ConnectionAttemptStore.shared.isPending(id) else {
+                    ConnectionDiagnostics.shared.record(.requestIgnored, component: .app, request: request, reason: .completedAttempt)
+                    return nil
+                }
                 activeAttemptIDs.insert(id)
             } catch {
+                ConnectionDiagnostics.shared.record(.requestIgnored, component: .app, request: request, reason: .coordinationFailed)
                 logger.error("Cannot join CLI attempt: \(error.localizedDescription)")
                 return nil
             }
         }
+        activeRequests.append(request)
         if let activeConnection {
+            ConnectionDiagnostics.shared.record(.connectionJoined, component: .app, request: request, connectionID: connectionID)
             return activeConnection
         }
+
+        connectionID = request.attemptID.flatMap(UUID.init(uuidString:)) ?? request.requestID
+        ConnectionDiagnostics.shared.record(.connectionStart, component: .app, request: request, connectionID: connectionID)
 
         let task = Task { @MainActor [weak self] in
             guard let self else { return }
@@ -79,6 +101,7 @@ final class VPNManager: ObservableObject {
         let alreadyConnected = await Task.detached { VPNAutomation.checkConnectionStatus() }.value
         if alreadyConnected {
             state = .connected
+            recordForActiveRequests(.connectedFastPath)
             finishConnection(.success)
             return
         }
@@ -92,6 +115,7 @@ final class VPNManager: ObservableObject {
         }
 
         state = .connecting
+        recordForActiveRequests(.credentialsStart)
 
         do {
             let provider = makeProvider()
@@ -108,6 +132,7 @@ final class VPNManager: ObservableObject {
                 otp = try await provider.fetchOTP()
             }
 
+            recordForActiveRequests(.automationStart)
             try VPNAutomation.connect(password: password, otp: otp)
 
             // Give Cisco a moment to finalize
@@ -167,11 +192,25 @@ final class VPNManager: ObservableObject {
 
     private func finishConnection(_ outcome: ConnectionAttemptStore.Outcome) {
         let attemptIDs = activeAttemptIDs
+        let requests = activeRequests
+        let finishedConnectionID = connectionID
         activeAttemptIDs.removeAll()
+        activeRequests.removeAll()
+        connectionID = nil
         activeConnection = nil
         for attemptID in attemptIDs {
             do { try ConnectionAttemptStore.shared.complete(outcome, for: attemptID) }
             catch { logger.error("Cannot publish CLI result: \(error.localizedDescription)") }
+        }
+        for request in requests {
+            ConnectionDiagnostics.shared.record(.terminal, component: .app, request: request,
+                connectionID: finishedConnectionID, terminal: .init(outcome))
+        }
+    }
+
+    private func recordForActiveRequests(_ event: ConnectionDiagnostics.Event) {
+        for request in activeRequests {
+            ConnectionDiagnostics.shared.record(event, component: .app, request: request, connectionID: connectionID)
         }
     }
 

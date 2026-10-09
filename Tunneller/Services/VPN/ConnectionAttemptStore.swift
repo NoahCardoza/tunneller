@@ -47,9 +47,11 @@ final class ConnectionAttemptStore {
     private let attemptTimeout: TimeInterval
     private let retention: TimeInterval
     private let coordinatorTimeout: TimeInterval
+    private let diagnostics: ConnectionDiagnostics
 
     init(directory: URL? = nil, attemptTimeout: TimeInterval = 300,
-         retention: TimeInterval = 24 * 60 * 60, coordinatorTimeout: TimeInterval = 5) {
+         retention: TimeInterval = 24 * 60 * 60, coordinatorTimeout: TimeInterval = 5,
+         diagnostics: ConnectionDiagnostics = .shared) {
         self.directory = directory ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("Tunneller/connection-attempts", isDirectory: true)
         // This bounds one stalled operation, never a retry cooldown. Allow both
@@ -57,6 +59,7 @@ final class ConnectionAttemptStore {
         self.attemptTimeout = attemptTimeout
         self.retention = retention
         self.coordinatorTimeout = coordinatorTimeout
+        self.diagnostics = diagnostics
     }
 
     func joinOrCreate() throws -> Registration {
@@ -189,6 +192,7 @@ final class ConnectionAttemptStore {
             // Atomic write renames a complete file into place; the coordinator
             // serializes publishers so a terminal result can never be overwritten.
             try Data(terminal.serialized.utf8).write(to: resultURL(id), options: .atomic)
+            diagnostics.record(.attemptTerminal, component: .store, attemptID: id, terminal: .init(terminal))
         }
         try clearActive(id)
         return terminal
