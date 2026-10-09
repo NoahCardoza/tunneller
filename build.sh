@@ -28,6 +28,7 @@ codesign -dvv "$APP" 2>&1 | grep -E "(Authority|TeamIdentifier|Entitlements)"
 
 echo "==> Building CLI tool..."
 swiftc -o "$BUILD_DIR/Debug/tunneller-cli" \
+    -parse-as-library \
     "$PROJECT_DIR/Tunneller/CLI/tunneller-cli.swift" \
     "$PROJECT_DIR/Tunneller/Services/VPN/ConnectionAttemptStore.swift" \
     -O
