@@ -47,6 +47,13 @@ tun status                   # Check if VPN is connected
 open tunneller://connect     # Same thing via URL scheme
 ```
 
+Concurrent `tun connect --wait` callers share one connection attempt and receive
+the same success or failure. A request made after that attempt finishes can retry
+immediately, without clearing files or waiting through a cooldown. An attempt has
+a five-minute maximum wait to cover both credential reads and Cisco automation;
+all callers share that deadline. Owner process exit also fails existing waiters.
+Completed results are collected after a day when no caller still needs them.
+
 ## Disclaimer
 
 Tunneller is an independent project and is not affiliated with, endorsed by, or sponsored by Cisco Systems, Inc.

@@ -11,23 +11,15 @@ final class VPNManager: ObservableObject {
 
     private let settings: AppSettings
 
-    private var connectObserver: Any?
     private var activeConnection: Task<Void, Never>?
-    private var activeAttemptIDs = Set<String>()
+    private var activeAttemptIDs = Set<UUID>()
 
     init(settings: AppSettings = .shared) {
         self.settings = settings
         refreshStatus()
-        connectObserver = NotificationCenter.default.addObserver(
-            forName: .tunnellerConnect,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
+        ConnectionRequestRouter.shared.register { [weak self] attemptID in
             guard let self else { return }
-            let attemptID = notification.object as? String
-            Task { @MainActor in
-                await self.requestConnection(attemptID: attemptID)
-            }
+            _ = self.connectionTask(attemptID: attemptID)
         }
     }
 
@@ -55,18 +47,24 @@ final class VPNManager: ObservableObject {
 
     /// Run the full connect flow: fetch credentials → automate Cisco.
     func connect() async {
-        await requestConnection(attemptID: nil)
+        await connectionTask(attemptID: nil)?.value
     }
 
     /// All callers join the same in-flight connection and receive its terminal result.
     /// URL-scheme callers additionally receive that result through ConnectionAttemptStore.
-    private func requestConnection(attemptID: String?) async {
-        if let attemptID, ConnectionAttemptStore.isValid(attemptID) {
-            activeAttemptIDs.insert(attemptID)
+    private func connectionTask(attemptID: String?) -> Task<Void, Never>? {
+        if let attemptID {
+            guard let id = UUID(uuidString: attemptID) else { return nil }
+            do {
+                guard try ConnectionAttemptStore.shared.isPending(id) else { return nil }
+                activeAttemptIDs.insert(id)
+            } catch {
+                logger.error("Cannot join CLI attempt: \(error.localizedDescription)")
+                return nil
+            }
         }
         if let activeConnection {
-            await activeConnection.value
-            return
+            return activeConnection
         }
 
         let task = Task { @MainActor [weak self] in
@@ -74,10 +72,16 @@ final class VPNManager: ObservableObject {
             await self.connectOnce()
         }
         activeConnection = task
-        await task.value
+        return task
     }
 
     private func connectOnce() async {
+        let alreadyConnected = await Task.detached { VPNAutomation.checkConnectionStatus() }.value
+        if alreadyConnected {
+            state = .connected
+            finishConnection(.success)
+            return
+        }
         let outcome: ConnectionAttemptStore.Outcome
 
         guard VPNAutomation.isAccessibilityGranted() else {
@@ -126,17 +130,20 @@ final class VPNManager: ObservableObject {
         } catch CredentialError.keychainItemNotFound {
             settings.hasKeychainCredentials = false
             state = .disconnected
+            finishConnection(.failure("credentials-not-configured"))
             showErrorAlert(CredentialError.keychainItemNotFound.localizedDescription)
-            outcome = .failure("credentials-not-configured")
+            return
         } catch CredentialError.totpSeedNotConfigured {
             settings.hasKeychainCredentials = false
             state = .disconnected
+            finishConnection(.failure("totp-not-configured"))
             showErrorAlert(CredentialError.totpSeedNotConfigured.localizedDescription)
-            outcome = .failure("totp-not-configured")
+            return
         } catch {
             state = .disconnected
+            finishConnection(.failure("connection-failed"))
             showErrorAlert(error.localizedDescription)
-            outcome = .failure("connection-failed")
+            return
         }
         finishConnection(outcome)
     }
@@ -163,17 +170,21 @@ final class VPNManager: ObservableObject {
         activeAttemptIDs.removeAll()
         activeConnection = nil
         for attemptID in attemptIDs {
-            ConnectionAttemptStore.publish(outcome, for: attemptID)
+            do { try ConnectionAttemptStore.shared.complete(outcome, for: attemptID) }
+            catch { logger.error("Cannot publish CLI result: \(error.localizedDescription)") }
         }
     }
 
     private func showErrorAlert(_ message: String) {
-        let alert = NSAlert()
-        alert.messageText = "Connection Failed"
-        alert.informativeText = message
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: "OK")
-        alert.runModal()
+        // Complete the shared task before entering the modal event loop.
+        DispatchQueue.main.async {
+            let alert = NSAlert()
+            alert.messageText = "Connection Failed"
+            alert.informativeText = message
+            alert.alertStyle = .warning
+            alert.addButton(withTitle: "OK")
+            alert.runModal()
+        }
     }
 
     // MARK: - Private
@@ -188,47 +199,6 @@ final class VPNManager: ObservableObject {
             )
         case .keychain:
             KeychainProvider(accountName: settings.keychainAccountName)
-        }
-    }
-}
-
-/// Same-user, attempt-scoped result channel used by the bundled `tun` CLI.
-/// Results are terminal facts for one UUID, never a global retry cooldown.
-enum ConnectionAttemptStore {
-    enum Outcome {
-        case success
-        case failure(String)
-
-        var serialized: String {
-            switch self {
-            case .success: "success\n"
-            case .failure(let code): "failure:\(code)\n"
-            }
-        }
-    }
-
-    private static let directory: URL = {
-        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        return base.appendingPathComponent("Tunneller/connection-attempts", isDirectory: true)
-    }()
-
-    static func isValid(_ value: String) -> Bool { UUID(uuidString: value) != nil }
-
-    static func publish(_ outcome: Outcome, for attemptID: String) {
-        guard isValid(attemptID) else { return }
-        do {
-            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true,
-                                                    attributes: [.posixPermissions: 0o700])
-            let destination = directory.appendingPathComponent("\(attemptID).result")
-            let temporary = directory.appendingPathComponent(".\(attemptID).\(UUID().uuidString).tmp")
-            try outcome.serialized.data(using: .utf8)?.write(to: temporary, options: .atomic)
-            _ = try FileManager.default.replaceItemAt(destination, withItemAt: temporary)
-        } catch {
-            // replaceItemAt requires an existing target on some Foundation versions.
-            let destination = directory.appendingPathComponent("\(attemptID).result")
-            let temporary = directory.appendingPathComponent(".\(attemptID).\(UUID().uuidString).tmp")
-            try? outcome.serialized.data(using: .utf8)?.write(to: temporary)
-            try? FileManager.default.moveItem(at: temporary, to: destination)
         }
     }
 }

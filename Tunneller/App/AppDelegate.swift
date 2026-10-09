@@ -1,8 +1,25 @@
 import AppKit
 import Foundation
 
-extension Notification.Name {
-    static let tunnellerConnect = Notification.Name("tunnellerConnect")
+/// Launch Services can deliver URLs before SwiftUI initializes the manager.
+/// Buffer those requests until a consumer registers, then deliver them once.
+@MainActor
+final class ConnectionRequestRouter {
+    static let shared = ConnectionRequestRouter()
+    private var pending: [String?] = []
+    private var handler: ((String?) -> Void)?
+
+    func send(attemptID: String?) {
+        if let handler { handler(attemptID) }
+        else { pending.append(attemptID) }
+    }
+
+    func register(_ handler: @escaping (String?) -> Void) {
+        self.handler = handler
+        let requests = pending
+        pending.removeAll()
+        for request in requests { handler(request) }
+    }
 }
 
 @MainActor
@@ -14,7 +31,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             case "connect":
                 let attemptID = URLComponents(url: url, resolvingAgainstBaseURL: false)?
                     .queryItems?.first(where: { $0.name == "attempt" })?.value
-                NotificationCenter.default.post(name: .tunnellerConnect, object: attemptID)
+                ConnectionRequestRouter.shared.send(attemptID: attemptID)
             default:
                 break
             }
